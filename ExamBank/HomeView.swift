@@ -13,6 +13,10 @@ struct HomeView: View {
         total == 0 ? 0 : Double(solved) / Double(total)
     }
 
+    private var recentQuestions: [Question] {
+        progress.snapshot.recent.compactMap(bank.question(withID:))
+    }
+
     var body: some View {
         NavigationStack {
             ZStack {
@@ -21,7 +25,7 @@ struct HomeView: View {
                     VStack(alignment: .leading, spacing: 22) {
                         header
                         progressCard
-                        if !progress.snapshot.recent.isEmpty {
+                        if !recentQuestions.isEmpty {
                             recentSection
                         }
                         subjectSection
@@ -112,7 +116,6 @@ struct HomeView: View {
     private var recentSection: some View {
         VStack(alignment: .leading, spacing: 10) {
             sectionTitle("최근 본 문제")
-            let recentQuestions = progress.snapshot.recent.compactMap(bank.question(withID:))
             VStack(spacing: 0) {
                 ForEach(recentQuestions.prefix(3)) { question in
                     Button {
