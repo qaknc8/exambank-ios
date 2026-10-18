@@ -1,0 +1,48 @@
+name: Build unsigned IPA
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: macos-15
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Show Xcode version
+        run: xcodebuild -version
+
+      - name: Check bundled question bank
+        run: |
+          test -f ExamBank/Questions/manifest.json
+          test "$(ls ExamBank/Questions/images | wc -l)" -ge 1
+          du -sh ExamBank/Questions
+
+      - name: Build without signing
+        run: |
+          xcodebuild \
+            -project ExamBank.xcodeproj \
+            -scheme ExamBank \
+            -configuration Release \
+            -sdk iphoneos \
+            -derivedDataPath build \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGN_IDENTITY="" \
+            build
+
+      - name: Package unsigned IPA
+        run: |
+          mkdir -p Payload
+          cp -R build/Build/Products/Release-iphoneos/ExamBank.app Payload/
+          zip -qry ExamBank-unsigned.ipa Payload
+          ls -lh ExamBank-unsigned.ipa
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ExamBank-unsigned-ipa
+          path: ExamBank-unsigned.ipa
+          retention-days: 7
