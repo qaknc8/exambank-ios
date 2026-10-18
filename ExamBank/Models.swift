@@ -48,17 +48,26 @@ struct SubjectSummary: Identifiable, Codable, Hashable {
     var id: String { name }
 }
 
+struct GradeSummary: Identifiable, Codable, Hashable {
+    let name: String
+    let questionCount: Int
+
+    var id: String { name }
+}
+
 struct BankManifest: Codable {
     let version: Int
     let generatedAt: String
     let sourceGeneratedAt: String?
     let subjects: [SubjectSummary]
+    let grades: [GradeSummary]?
     let questions: [Question]
 }
 
 struct BankFilter: Equatable {
     var subject: String? = nil
     var year: Int? = nil
+    var grade: String? = nil
     var onlyUnsolved = false
     var onlyBookmarked = false
     var query = ""
@@ -66,6 +75,7 @@ struct BankFilter: Equatable {
     var isActive: Bool {
         subject != nil
             || year != nil
+            || grade != nil
             || onlyUnsolved
             || onlyBookmarked
             || !query.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
@@ -83,6 +93,7 @@ struct BankFilter: Equatable {
         return questions.filter { question in
             if let subject, question.subject != subject { return false }
             if let year, question.year != year { return false }
+            if let grade, question.grade != grade { return false }
             if onlyUnsolved && solved.contains(question.id) { return false }
             if onlyBookmarked && !bookmarked.contains(question.id) { return false }
 

@@ -70,6 +70,7 @@ struct SettingsView: View {
                 .foregroundStyle(Color.ink)
 
             infoRow("과목", bank.subjects.map(\.name).joined(separator: ", "))
+            infoRow("시험", bank.grades.map(\.name).joined(separator: ", "))
             infoRow("문항", String(bank.questions.count) + "문제")
             infoRow("정답 등록", String(answeredBankCount) + "문제")
             if let generated = bank.manifest?.sourceGeneratedAt {

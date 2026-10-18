@@ -18,10 +18,24 @@ struct QuestionBrowserView: View {
     @State private var detailQuestion: Question?
 
     private var availableYears: [Int] {
-        let scoped = filter.subject.map { subject in
-            bank.questions.filter { $0.subject == subject }
-        } ?? bank.questions
+        let scoped = bank.questions.filter { question in
+            (filter.subject == nil || question.subject == filter.subject)
+                && (filter.grade == nil || question.grade == filter.grade)
+        }
         return Array(Set(scoped.map(\.year))).sorted(by: >)
+    }
+
+    private var availableGrades: [String] {
+        let scoped = bank.questions.filter { question in
+            (filter.subject == nil || question.subject == filter.subject)
+                && (filter.year == nil || question.year == filter.year)
+        }
+        let counts = Dictionary(grouping: scoped, by: \.grade).mapValues(\.count)
+        return counts.keys.sorted { lhs, rhs in
+            let left = counts[lhs] ?? 0
+            let right = counts[rhs] ?? 0
+            return left == right ? lhs < rhs : left > right
+        }
     }
 
     private var filteredQuestions: [Question] {
@@ -131,6 +145,7 @@ struct QuestionBrowserView: View {
                     chip(title: "전체", selected: filter.subject == nil) {
                         filter.subject = nil
                         filter.year = nil
+                        filter.grade = nil
                     }
                     ForEach(bank.subjects) { subject in
                         chip(title: subject.name, selected: filter.subject == subject.name) {
@@ -140,32 +155,37 @@ struct QuestionBrowserView: View {
                             }
                         }
                     }
+                    Spacer(minLength: 0)
+                    Menu {
+                        Button("전체 연도") { filter.year = nil }
+                        ForEach(availableYears, id: \.self) { year in
+                            Button(String(year) + "년") { filter.year = year }
+                        }
+                    } label: {
+                        compactLabel(
+                            icon: "calendar",
+                            text: filter.year.map { String($0) + "년" } ?? "연도"
+                        )
+                    }
+                    .buttonStyle(.plain)
+
+                    Menu {
+                        Button("전체 시험") { filter.grade = nil }
+                        ForEach(availableGrades, id: \.self) { grade in
+                            Button(grade) { filter.grade = grade }
+                        }
+                    } label: {
+                        compactLabel(
+                            icon: "graduationcap",
+                            text: filter.grade ?? "시험"
+                        )
+                    }
+                    .buttonStyle(.plain)
                 }
                 .padding(.vertical, 1)
             }
 
             HStack(spacing: 10) {
-                Menu {
-                    Button("전체 연도") { filter.year = nil }
-                    ForEach(availableYears, id: \.self) { year in
-                        Button(String(year) + "년") { filter.year = year }
-                    }
-                } label: {
-                    HStack(spacing: 6) {
-                        Image(systemName: "calendar")
-                        Text(filter.year.map { String($0) + "년" } ?? "전체 연도")
-                        Image(systemName: "chevron.down")
-                            .font(.caption2.weight(.bold))
-                    }
-                    .font(.subheadline.weight(.medium))
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 8)
-                    .background(Color.paper, in: Capsule())
-                }
-                .buttonStyle(.plain)
-
-                Spacer(minLength: 0)
-
                 toggleChip(
                     title: "안 푼 문제",
                     icon: "circle.dashed",
@@ -180,6 +200,10 @@ struct QuestionBrowserView: View {
                 ) {
                     filter.onlyBookmarked.toggle()
                 }
+                Spacer(minLength: 0)
+                Text(String(filteredQuestions.count) + "문제")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(Color.inkSoft)
             }
         }
         .examCard(padding: 14)
@@ -242,6 +266,21 @@ struct QuestionBrowserView: View {
         }
         .frame(maxWidth: .infinity)
         .padding(.top, 60)
+    }
+
+    private func compactLabel(icon: String, text: String) -> some View {
+        HStack(spacing: 5) {
+            Image(systemName: icon)
+                .font(.caption)
+            Text(text)
+            Image(systemName: "chevron.down")
+                .font(.system(size: 8, weight: .bold))
+        }
+        .font(.subheadline.weight(.medium))
+        .padding(.horizontal, 11)
+        .padding(.vertical, 8)
+        .background(Color.paper, in: Capsule())
+        .foregroundStyle(Color.ink)
     }
 
     private func chip(title: String, selected: Bool, action: @escaping () -> Void) -> some View {

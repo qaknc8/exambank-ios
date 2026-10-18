@@ -8,6 +8,7 @@ final class BankStore: ObservableObject {
 
     var questions: [Question] { manifest?.questions ?? [] }
     var subjects: [SubjectSummary] { manifest?.subjects ?? [] }
+    var grades: [GradeSummary] { manifest?.grades ?? [] }
     var answeredCount: Int { questions.filter { $0.answer != nil }.count }
 
     func loadIfNeeded() {

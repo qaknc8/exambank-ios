@@ -215,7 +215,10 @@ private struct SubjectCard: View {
     }
 
     private var yearsText: String {
-        subject.years.map(String.init).joined(separator: " · ")
+        let years = subject.years.sorted()
+        guard let first = years.first, let last = years.last else { return "" }
+        if first == last { return String(first) }
+        return String(first) + "–" + String(last)
     }
 
     var body: some View {
