@@ -72,7 +72,7 @@ Mac이 없다면 [INSTALL-WINDOWS.md](INSTALL-WINDOWS.md)의 GitHub Actions + Si
 
 ## 문제은행 참고
 
-- 원본 PDF: `pdf/`
-- 생성 결과: `questions/<과목>/<연도>/<연도>_<급수>_<책형>_NN.png` + `index.json`
-- 현재 120문항(언어논리 2005, 자료해석 2005, 상황판단 2006), 총 이미지 약 31MB
+- 원본 PDF: `pdf/<과목>/*.pdf` (110개)
+- 생성 결과: `questions/<과목>/<연도>/<연도>_<급수>_<책형>_NN.webp` + `index.json`
+- 현재 3,680문항(110개 시험, 2006–2025), 총 이미지 약 318MB (WebP)
 - 스크립트는 각자 파일 위치를 기준으로 `pdf/`, `questions/`, `answers/`를 찾으므로 경로 수정 없이 실행할 수 있습니다.
