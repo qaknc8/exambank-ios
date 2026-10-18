@@ -148,12 +148,12 @@ struct QuestionBrowserView: View {
                 Menu {
                     Button("전체 연도") { filter.year = nil }
                     ForEach(availableYears, id: \.self) { year in
-                        Button("\(year)년") { filter.year = year }
+                        Button(String(year) + "년") { filter.year = year }
                     }
                 } label: {
                     HStack(spacing: 6) {
                         Image(systemName: "calendar")
-                        Text(filter.year.map { "\($0)년" } ?? "전체 연도")
+                        Text(filter.year.map { String($0) + "년" } ?? "전체 연도")
                         Image(systemName: "chevron.down")
                             .font(.caption2.weight(.bold))
                     }
@@ -188,7 +188,7 @@ struct QuestionBrowserView: View {
 
     private var summaryRow: some View {
         HStack {
-            Text("\(filteredQuestions.count)문제")
+            Text(String(filteredQuestions.count) + "문제")
                 .font(.footnote.weight(.semibold))
                 .foregroundStyle(Color.inkSoft)
             if filter.isActive {
@@ -205,10 +205,10 @@ struct QuestionBrowserView: View {
     private var startBar: some View {
         HStack(spacing: 12) {
             VStack(alignment: .leading, spacing: 2) {
-                Text("\(filteredQuestions.count)문제 선택됨")
+                Text(String(filteredQuestions.count) + "문제 선택됨")
                     .font(.subheadline.weight(.semibold))
                     .foregroundStyle(Color.ink)
-                Text(filteredQuestions.first.map { "\($0.subject) · \($0.year)년부터" } ?? "")
+                Text(filteredQuestions.first.map { "\($0.subject) · " + String($0.year) + "년부터" } ?? "")
                     .font(.caption)
                     .foregroundStyle(Color.inkSoft)
             }
@@ -323,7 +323,7 @@ struct QuestionRowContent: View {
                         .foregroundStyle(Color.brand)
                     Text("·")
                         .foregroundStyle(Color.inkSoft)
-                    Text("\(question.year)년 \(question.grade)")
+                    Text(String(question.year) + "년 " + question.grade)
                         .font(.caption)
                         .foregroundStyle(Color.inkSoft)
                     if question.hasVisual {

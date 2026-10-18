@@ -72,10 +72,10 @@ struct SessionView: View {
             .buttonStyle(.plain)
 
             VStack(alignment: .leading, spacing: 2) {
-                Text(question.map { "\($0.subject) · \($0.year)년" } ?? "문제")
+                Text(question.map { "\($0.subject) · " + String($0.year) + "년" } ?? "문제")
                     .font(.caption)
                     .foregroundStyle(Color.inkSoft)
-                Text("\(index + 1) / \(session.questions.count)")
+                Text(String(index + 1) + " / " + String(session.questions.count))
                     .font(.system(.subheadline, design: .rounded).weight(.bold))
                     .foregroundStyle(Color.ink)
                     .monospacedDigit()

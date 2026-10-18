@@ -70,13 +70,13 @@ struct SettingsView: View {
                 .foregroundStyle(Color.ink)
 
             infoRow("과목", bank.subjects.map(\.name).joined(separator: ", "))
-            infoRow("문항", "\(bank.questions.count)문제")
-            infoRow("정답 등록", "\(answeredBankCount)문제")
+            infoRow("문항", String(bank.questions.count) + "문제")
+            infoRow("정답 등록", String(answeredBankCount) + "문제")
             if let generated = bank.manifest?.sourceGeneratedAt {
                 infoRow("은행 생성", String(generated.prefix(10)))
             }
             if let version = bank.manifest?.version {
-                infoRow("형식 버전", "\(version)")
+                infoRow("형식 버전", String(version))
             }
 
             Text("문제 이미지와 텍스트를 추가하려면 tools/build_question_bank.py로 문제은행을 다시 만든 뒤 tools/sync_ios_assets.py를 실행하고 앱을 다시 빌드하세요.")
